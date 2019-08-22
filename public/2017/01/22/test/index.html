@@ -5,12 +5,15 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>test - 亚宁</title>
+    <title>Android开发 ScrollView默认位置不是最顶部解决方案 - 亚宁</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate">
     <meta name="keywords" content="jiaoyaning,"> 
-    
+    <meta name="description" content="描述：Scrollview里面嵌套了一个listview ，这是开发中最寻常的一种布局，遇到的问题是：在这个Scrollview页面默认的起始位置不是最顶部，而是listview的底部。
+
+原因：
+,"> 
     <meta name="author" content="Jiao yaning"> 
     <link rel="alternative" href="atom.xml" title="亚宁" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -33,9 +36,9 @@
     <div id="single">
     <div id="top" style="display: block;">
     <div class="bar" style="width: 0;"></div>
-    <a class="icon-home image-icon" href="javascript:;" data-url="http://jiaoyaning1210.github.io"></a>
+    <a class="icon-home image-icon" href="javascript:;" data-url="https://jiaoyaning.github.io"></a>
     <div title="播放/暂停" class="icon-play"></div>
-    <h3 class="subtitle">test</h3>
+    <h3 class="subtitle">Android开发 ScrollView默认位置不是最顶部解决方案</h3>
     <div class="social">
         <!--<div class="like-icon">-->
             <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
@@ -53,14 +56,47 @@
     <div class="section">
         <div class="article">
     <div class='main'>
-        <h1 class="title">test</h1>
+        <h1 class="title">Android开发 ScrollView默认位置不是最顶部解决方案</h1>
         <div class="stuff">
             <span>一月 22, 2017</span>
             
 
         </div>
         <div class="content markdown">
-            
+            <h2 id="描述："><a href="#描述：" class="headerlink" title="描述："></a>描述：</h2><p>Scrollview里面嵌套了一个listview ，这是开发中最寻常的一种布局，遇到的问题是：在这个Scrollview页面默认的起始位置不是最顶部，而是listview的底部。</p>
+<hr>
+<h2 id="原因："><a href="#原因：" class="headerlink" title="原因："></a>原因：</h2><ol>
+<li><p>在Activity计算窗口的高度时，是在listview没有填充数据时候就完成的，由于ScrollView嵌套listview时没有指定高度，所以ScrollView就会按照layout中定义的默认高度计算。</p>
+</li>
+<li><p>因为listview获取了焦点。</p>
+</li>
+</ol>
+<hr>
+<h2 id="解决："><a href="#解决：" class="headerlink" title="解决："></a>解决：</h2><ol>
+<li><p>myScrollView.smoothScrollTo(0,20);</p>
+<blockquote>
+<p>需在listview数据加载完成后调用</p>
+</blockquote>
+</li>
+<li><p>在代码里去掉listview的焦点</p>
+<blockquote>
+<p>lv.setFocusable(false);</p>
+</blockquote>
+</li>
+<li><p>Listview外套一层LinearLayout</p>
+</li>
+<li><p>跟EditText一样，在父元素的属性下面下下面这两行即可</p>
+<blockquote>
+<p>android:focusableInTouchMode=”true”<br>android:focusable=”true”</p>
+</blockquote>
+</li>
+<li><p>最开始的时候让最上面其中一个控件获得焦点，滚动条自然就到顶部去了，如下：</p>
+<blockquote>
+<p>txtBaseMsg.setFocusable(true);<br>txtBaseMsg.setFocusableInTouchMode(true);<br>txtBaseMsg.requestFocus();</p>
+</blockquote>
+</li>
+</ol>
+
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
                 <source type="audio/mpeg" src="">
@@ -94,7 +130,7 @@
     </div>
     
         <div class='side'>
-            
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#描述："><span class="toc-number">1.</span> <span class="toc-text">描述：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原因："><span class="toc-number">2.</span> <span class="toc-text">原因：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决："><span class="toc-number">3.</span> <span class="toc-text">解决：</span></a></li></ol>
         </div>
     
 </div>
