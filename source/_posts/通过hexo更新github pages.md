@@ -1,5 +1,6 @@
 ---
 title: 通过hexo更新github pages
+cover: https://isujin.com/wp-content/themes/Diaspora/timthumb/timthumb.php?src=https://isujin.com/wp-content/uploads/2016/07/wallhaven-384720.png
 ---
 ### 文件生成及编辑
 
