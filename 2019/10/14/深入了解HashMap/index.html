@@ -1,0 +1,192 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hans" class="loading">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>深入了解HashMap - 亚宁</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="jiaoyaning,"> 
+    <meta name="description" content="简单介绍众所周知，HashMap是一个用于存储Key-Value键值对的集合，每一个键值对也叫做Entry。这些个键值对（Entry）分散存储在一个数组当中，这个数组就是HashMap的主干。
+Ha,"> 
+    <meta name="author" content="Jiao yaning"> 
+    <link rel="alternative" href="atom.xml" title="亚宁" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+</html>
+
+<body class="loading">
+    <span id="config-title" style="display:none">亚宁</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="https://jiaoyaning.github.io"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">深入了解HashMap</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">深入了解HashMap</h1>
+        <div class="stuff">
+            <span>十月 14, 2019</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Java/">Java</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h2 id="简单介绍"><a href="#简单介绍" class="headerlink" title="简单介绍"></a>简单介绍</h2><p>众所周知，<code>HashMap</code>是一个用于存储<code>Key-Value</code>键值对的集合，每一个键值对也叫做<code>Entry</code>。这些个键值对<code>（Entry）</code>分散存储在一个数组当中，这个数组就是<code>HashMap</code>的主干。</p>
+<p><code>HashMap</code>数组每一个元素的初始值都是<code>Null</code>。<br><img src="//jiaoyaning.github.io/2019/10/14/深入了解HashMap/HashMap数组初始值.jpg" alt="HashMap"></p>
+<p>对于<code>HashMap</code>，我们最常使用的是两个方法：<code>Get</code> 和 <code>Put</code>。  </p>
+<h3 id="1-Put方法简单原理"><a href="#1-Put方法简单原理" class="headerlink" title="1 . Put方法简单原理"></a>1 . <code>Put</code>方法简单原理</h3><p>调用Put方法的时候发生了什么呢？</p>
+<p>比如调用 <code>hashMap.put(&quot;apple&quot;, 0)</code> ，插入一个<code>Key</code>为<code>apple</code>的元素。这时候我们需要利用一个哈希函数来确定<code>Entry</code>的插入位置<code>（index）</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index =  Hash（&quot;apple&quot;）</span><br></pre></td></tr></table></figure>
+<p>假定最后计算出的index是2，那么结果如下：<br><img src="//jiaoyaning.github.io/2019/10/14/深入了解HashMap/HeshMapPut插入图.jpg" alt="HashMap"></p>
+<p>但是，因为<code>HashMap</code>的长度是有限的，当插入的<code>Entry</code>越来越多时，再完美的<code>Hash</code>函数也难免会出现<code>index</code>冲突的情况。比如下面这样：</p>
+<p><img src="//jiaoyaning.github.io/2019/10/14/深入了解HashMap/Hash函数也难免会出现index冲突.jpg" alt="HashMap"></p>
+<p>这时候该怎么办呢？我们可以利用 <strong>链表</strong> 来解决。</p>
+<p><code>HashMap</code>数组的每一个元素不止是一个<code>Entry</code>对象，也是一个链表的头节点。每一个<code>Entry</code>对象通过<code>Next</code>指针指向它的下一个<code>Entry</code>节点。当新来的<code>Entry</code>映射到冲突的数组位置时，只需要插入到对应的链表即可：</p>
+<p><img src="//jiaoyaning.github.io/2019/10/14/深入了解HashMap/HashMap数组链表.jpg" alt="HashMap"></p>
+<p>需要注意的是，新来的<code>Entry</code>节点插入链表时，使用的是“头插法”。<br>至于为什么不插入链表尾部，后面会有解释。</p>
+<h3 id="2-Get方法简单原理"><a href="#2-Get方法简单原理" class="headerlink" title="2 . Get方法简单原理"></a>2 . <code>Get</code>方法简单原理</h3><p>使用<code>Get</code>方法根据<code>Key</code>来查找<code>Value</code>的时候，发生了什么呢？</p>
+<p>首先会把输入的<code>Key</code>做一次<code>Hash</code>映射，得到对应的<code>index</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index =  Hash（&quot;apple&quot;）</span><br></pre></td></tr></table></figure>
+<p>由于刚才所说的<code>Hash</code>冲突，同一个位置有可能匹配到多个<code>Entry</code>，这时候就需要顺着对应链表的头节点，一个一个向下来查找。假设我们要查找的<code>Key</code>是“apple”：</p>
+<p><img src="//jiaoyaning.github.io/2019/10/14/深入了解HashMap/HashMapget链表.jpg" alt="HashMap"></p>
+<p>第一步，我们查看的是头节点<code>Entry6</code>，<code>Entry6</code>的<code>Key</code>是<code>banana</code>，显然不是我们要找的结果。</p>
+<p>第二步，我们查看的是<code>Next</code>节点<code>Entry1</code>，<code>Entry1</code>的<code>Key</code>是<code>apple</code>，正是我们要找的结果。</p>
+<p>之所以把<code>Entry6</code>放在头节点，是因为<code>HashMap</code>的发明者认为，后插入的<code>Entry</code>被查找的可能性更大。</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        
+                            <li title='0' data-url='http://link.hhtjim.com/163/5146554.mp3'></li>
+                        
+                    
+                        
+                            <li title='1' data-url='http://link.hhtjim.com/qq/001faIUs4M2zna.mp3'></li>
+                        
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='true'
+        data-ci='ed29774df4743a2d136d'
+        data-cs='730f74664f36200c679a07a8c1644d22ef933739'
+        data-r='jiaoyaning.github.io'
+        data-o='jiaoyaning'
+        data-a='jiaoyaning'
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+        <div class='side'>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简单介绍"><span class="toc-number">1.</span> <span class="toc-text">简单介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Put方法简单原理"><span class="toc-number">1.1.</span> <span class="toc-text">1 . Put方法简单原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Get方法简单原理"><span class="toc-number">1.2.</span> <span class="toc-text">2 . Get方法简单原理</span></a></li></ol></li></ol>
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+</html>
